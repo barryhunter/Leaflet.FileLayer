@@ -1,0 +1,9 @@
+{
+	"name": "OpenPTMap",
+	"type": "overlay",
+	"url": "http://openptmap.org/tiles/{z}/{x}/{y}.png", 
+	"attribution": "Map data: &copy; <a href=http://www.openptmap.org/>OpenPtMap</a> contributors",
+	"options": {
+		"maxZoom": 17
+	}
+}

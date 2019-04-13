@@ -1,0 +1,9 @@
+{
+	"name": "OpenMapSurfer.AdminBounds",
+	"type": "overlay",
+	"url": "https://maps.heigit.org/openmapsurfer/tiles/adminb/webmercator/{z}/{x}/{y}.png", 
+	"attribution": "Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a>",
+	"options": {
+		"maxZoom": 18
+	}
+}

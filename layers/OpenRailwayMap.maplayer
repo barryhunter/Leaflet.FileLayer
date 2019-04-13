@@ -1,0 +1,6 @@
+{
+	"name": "OpenRailwayMap - Standard",
+	"type": "overlay",
+	"url": "https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png", 
+	"attribution": "Rendering: <a href=https://www.openrailwaymap.org/>OpenRailwayMap</a>"
+}

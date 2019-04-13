@@ -54,7 +54,8 @@
                 geojson: this._loadGeoJSON,
                 json: this._loadGeoJSON,
                 gpx: this._convertToGeoJSON,
-                kml: this._convertToGeoJSON
+                kml: this._convertToGeoJSON,
+		maplayer: this._loadMapLayer
             };
         },
 
@@ -193,6 +194,48 @@
             return true;
         },
 
+	_loadMapLayer: function _loadMapLayer(content) {
+            var layer;
+            if (typeof content === 'string') {
+                try {
+	                content = JSON.parse(content);
+		} catch(e) {
+			 throw new Error('File does not appear to be valid JSON. '+e);
+		}
+            }
+
+	    var url = content.url;
+	    var options = {}
+
+            if (content.options && typeof content.options == 'object')
+		options = L.extend(options,content.options);
+	
+            if (content.attribution)
+		options.attribution = content.attribution;
+
+	    //todo, need support for other types of layers! eg WMS
+            layer = L.tileLayer(url, options);
+
+	//temporally bodge, this class is expecting layer to be geojson, which has a getBounds method!
+	// but if the layer does have bounds can create one!
+	if (options.bounds) {
+		layer.getBounds = function() { return options.bounds }
+	}
+
+            //if (layer.getLayers().length === 0) {
+            //    throw new Error('GeoJSON has no valid layers.');
+            //}
+
+            if (this.options.addToMap) {
+
+		//todo, if content.type = 'overlay' need to add first to layerswitcher.addOverlay() 
+                // ... still unresolved how this will work!
+
+                layer.addTo(this._map);
+            }
+            return layer;
+        },
+
         _loadGeoJSON: function _loadGeoJSON(content) {
             var layer;
             if (typeof content === 'string') {
@@ -223,7 +266,7 @@
 
     var FileLayerLoad = L.Control.extend({
         statics: {
-            TITLE: 'Load local file (GPX, KML, GeoJSON)',
+            TITLE: 'Load local file (GPX, KML, GeoJSON, MapLayer)',
             LABEL: '&#8965;'
         },
         options: {
@@ -244,7 +287,7 @@
 
             this.loader.on('data:loaded', function (e) {
                 // Fit bounds after loading
-                if (this.options.fitBounds) {
+                if (this.options.fitBounds && e.layer.getBounds) {
                     window.setTimeout(function () {
                         map.fitBounds(e.layer.getBounds());
                     }, 500);
@@ -308,7 +351,7 @@
             fileInput.type = 'file';
             fileInput.multiple = 'multiple';
             if (!this.options.formats) {
-                fileInput.accept = '.gpx,.kml,.json,.geojson';
+                fileInput.accept = '.gpx,.kml,.json,.geojson,.maplayer';
             } else {
                 fileInput.accept = this.options.formats.join(',');
             }
